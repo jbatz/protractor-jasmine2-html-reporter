@@ -186,6 +186,8 @@ function Jasmine2HTMLReporter(options) {
         }
 
         var output = '';
+        output += summaryAsHtml(suites);
+
         for (var i = 0; i < suites.length; i++) {
             output += self.getOrWriteNestedOutput(suites[i]);
         }
@@ -253,6 +255,35 @@ function Jasmine2HTMLReporter(options) {
         stream.write(new Buffer(data, 'base64'));
         stream.end();
     };
+
+    function summaryAsHtml(suites) {
+        var tests = 0;
+        var skipped = 0;
+        var passed = 0;
+        var failed = 0;
+
+        for (var i = 0; i < suites.length; i++) {
+            tests += suites[i]._specs.length;
+            skipped += suites[i]._skipped;
+            failed += suites[i]._failures;
+
+            var suitePassed = suites[i]._specs.length - suites[i]._skipped - suites[i]._failures;
+            passed += suitePassed;
+        }
+
+        var html = '<article class="suite">';
+        html += '<header>';
+        html += '<h2> Summary</h2>';
+        html += '<ul class="stats">';
+        html += '<li>Tests: <strong>' + tests + '</strong></li>';
+        html += '<li>Passed: <strong>' + passed + '</strong></li>';
+        html += '<li>Skipped: <strong>' + skipped + '</strong></li>';
+        html += '<li>Failures: <strong>' + failed + '</strong></li>';
+        html += '</ul> </header>';
+        html += '\n </article>';
+        html += '<p/>';
+        return html;
+    }
 
     function suiteAsHtml(suite) {
 
